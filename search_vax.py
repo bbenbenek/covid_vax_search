@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[14]:
-
-
 import requests
 import urllib.request
 import threading
@@ -11,10 +5,12 @@ import smtplib
 import ssl
 import os
 from twilio.rest import Client
+from datetime import datetime
+import time
 
 
-account_sid = 'AC401d2651c1120a18028f3449a5f3adc1'
-auth_token = '4a8eb2ec670d16088a25be5fecadff32'
+account_sid = twilio_acct_id
+auth_token = twilio_auth_token
 client = Client(account_sid, auth_token)
 
 my_cities = ['ALEXANDRIA',
@@ -39,27 +35,35 @@ my_cities = ['ALEXANDRIA',
           #'RICHLANDS' #TEST
             ] 
 
-UPDATE = 300.0 # 5 minute intervals
-
-def Search_Vax():
-    
-    threading.Timer(UPDATE, sendit).start()
-    
+def Search_Vax(client, my_cities):
+        
     headers = {'referer': 'https://www.cvs.com/immunizations/covid-19-vaccine?icid=coronavirus-lp-nav-vaccine'}
 
     req = requests.get('https://www.cvs.com/immunizations/covid-19-vaccine.vaccine-status.VA.json?vaccineinfo', headers=headers)
     req = req.json()
 
+    counter = 0
+    city_avail = []
     for city_dict in req['responsePayloadData']['data']['VA']:
         if (city_dict['city'] in my_cities) & (city_dict['status']=='Available'):
 
-            message = 'COVID-19 vaccine available in ' + city_dict['city'] + ', VA. Go to https://www.cvs.com/vaccine/intake/store/covid-screener/covid-qns to sign up.'
+            city_avail.append(city_dict['city'])
+        
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
 
-            # Send Twilio Text Message
-            # Brian
-            client.messages.create(body=message,from_='+17604630254',to='+14845475276')
-            # Nikki
-            #client.messages.create(body=message, from_='+17604630254',to='+14845154869')
-            
-Search_Vax()
+    if len(city_avail) > 0:
+        message = 'COVID-19 vaccine available in ' + (' & ').join(city_avail) + '. Go to https://www.cvs.com/vaccine/intake/store/covid-screener/covid-qns to sign up.'
 
+        # Send Twilio Text Message
+        # My Number
+        client.messages.create(body=message, from_='+0001112222',to='+15555555555')
+
+        
+        print(current_time, 'Appointment found! Sent text message.')
+    else:
+        print(current_time, 'No appointments available')
+        
+while True:
+    Search_Vax(client, my_cities)
+    time.sleep(300)
