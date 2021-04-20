@@ -13,26 +13,9 @@ account_sid = twilio_acct_id
 auth_token = twilio_auth_token
 client = Client(account_sid, auth_token)
 
-my_cities = ['ALEXANDRIA',
-          'ANNANDALE',
-          'ARLINGTON',
-          'ASHBURN',
-          'BAILEYS CROSSROADS',
-          'CHANTILLY',
-          'DUMFRIES',
-          'DALE CITY',
-          'GREAT FALLS',
-          'HERNDON',
-          'LEESBURG',
-          'MANASSAS',
-          'MANASSAS PARK',
-          'RESTON',
-          'ROSSLYN',
-          'STERLING',
-          'VIENNA',
-          'WARRENTON',
-          'WOODBRIDGE',
-          #'RICHLANDS' #TEST
+my_cities = ['MY CITY1',
+             'MY CITY 2',
+             'MY CITY 3',
             ] 
 
 def Search_Vax(client, my_cities):
